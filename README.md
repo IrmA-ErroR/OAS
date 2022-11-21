@@ -1,6 +1,7 @@
 # OAS
 SQL queries to the training database Orel AutoService
 В файле содержатся задания по 8 темам:
+
 Простая выборка (по одной таблице)
   
 1.	Выдать список механиков (все столбцы таблицы mechanic)
