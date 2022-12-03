@@ -245,7 +245,7 @@ from vehicle v ;
 select b."name" as "Производитель" , f.factory_name as "Завод"
 from brand b 
 join factory f on f.idb = b.idb 
-order by 1
+order by 1 ;
 
 --32.	 Составить список автомобилей с указанием их государственного номерного знака (таблица 
 --vehicle), производителя (таблица brand), наименования марки (таблица marka) и модели (таблица model). 
@@ -258,7 +258,7 @@ concat(b."name", ', ', m1."name", ', ', m2.model_name) as "Автомобиль"
 from vehicle v 
 join brand b on b.idb = v.idb
 join marka m1 on m1.idm = v.idm 
-join model m2 on m2.idmo = v.idmo
+join model m2 on m2.idmo = v.idmo ;
 
 
 --33.	 Создать список контактных телефонов производителей (телефоны заводов), по которым могут 
@@ -267,7 +267,7 @@ join model m2 on m2.idmo = v.idmo
 --Ответ: 161 строка, 3 столбца.
 select gnz , b."name" , b.phone 
 from vehicle v 
-join brand b on b.idb = v.idb
+join brand b on b.idb = v.idb ;
 
 --34.	 Составить список механиков, обслуживавших автомобиль с государственным номерным знаком 
 --"o009oo57". В выдачу включить дату проведения работ в формате "dd.mm.yyyy" и фамилию и инициалы 
@@ -276,7 +276,7 @@ select m.date_work::date , m2.sname_initials
 from maintenance m 
 join mechanic m2 on m2.id_mech = m.id_mech 
 where gnz like 'o009oo57 '
-order by 1
+order by 1 ;
 
 
 --35.	 Найти автомобили производства Японии. Указать производителя, марку, модель, разделенные 
@@ -288,7 +288,7 @@ join brand b on b.idb = v.idb
 join marka m1 on m1.idm = v.idm 
 join model m2 on m2.idmo = v.idmo
 join state s on s.st_id = v.st_id 
-where v.st_id =(select st_id from state s where "name" = 'Япония')
+where v.st_id =(select st_id from state s where "name" = 'Япония') ;
 
 --36.	 Сформировать список автомобилей, сменивших владельца (самосоединение таблицы vehicle со 
 --своей копией, совпадают даты изготовления, производители, марки, модели; различаются государственные
@@ -305,8 +305,7 @@ concat(v."ser$reg_certif" , ' ', v."num$reg_certif" , ' ', to_char(v."date$reg_c
 concat(v2."ser$reg_certif" , ' ', v2."num$reg_certif" , ' ', to_char(v2."date$reg_certif", 'dd.mm.yyyy')) as "Данные"
 from vehicle v 
 left join vehicle v2 on v2.date_made = v.date_made and v.gnz < v2.gnz 
-where v2.gnz is not null
-
+where v2.gnz is not null ;
 
 --37.	 Выдать список механиков (фамилии и инициалы), государственные номерные знаки обслуженных 
 --или отремонтированных ими автомобилей и даты выполнения работ с учетом возможности отсутствия 
@@ -314,7 +313,7 @@ where v2.gnz is not null
 --Ответ: 639 строк, 3 столбца. Заказы не выполняли Калатошкин М.П. и Лискунов М.В.
 select m.sname_initials , m2.gnz , m2.date_work --644
 from mechanic m 
-left outer join maintenance m2 on m2.id_mech = m.id_mech 
+left outer join maintenance m2 on m2.id_mech = m.id_mech ;
 
 --38.	 Сформировать список технических заключений по ремонтам автомобилей BMW. В выдачу включить 
 --наименование производителя, наименование завода, дату проведения ремонта без указания времени, 
@@ -325,7 +324,7 @@ from maintenance m
 join brand b on b.idb = m.idb 
 join factory f on f.idf = m.idf 
 where b."name" = 'BMW'
-order by m.date_work 
+order by m.date_work ;
 
 --39.	 Найти автомобильные предприятия, расположенные на той же улице, что и "ОАО АВТОВАЗ". 
 --Выдать наименование, почтовый и фактический адрес, контактный телефон. Использовать самосоединение.
@@ -333,7 +332,7 @@ order by m.date_work
 select f.factory_name , f.post_addr , f.legal_addr , f.phone 
 from factory f  
 join factory f2 on f2.post_addr = f.post_addr 
-where f.factory_name like '%ОАО АВТОВАЗ'
+where f.factory_name like '%ОАО АВТОВАЗ' ;
 
 --40.	 Найти автомобили, которые обслуживал тот же механик, что и автомобиль с государственным 
 --номерным знаком "o929ao57". Выдать государственные номерные знаки обслуженных автомобилей, 
@@ -342,7 +341,7 @@ where f.factory_name like '%ОАО АВТОВАЗ'
 explain analyze
 select gnz, to_char(date_work, 'dd.mm.yyyy') as "data", to_char(date_work, 'hh24.mi') as "time"
 from maintenance m 
-where id_mech = (select id_mech from maintenance m2 where gnz = 'o929ao57')
+where id_mech = (select id_mech from maintenance m2 where gnz = 'o929ao57') ;
 
 --41.	 Сформировать список автомобилей, свидетельство о регистрации транспортного средства которых
 --имеет ту же серию, что и документ автомобиля с государственным номерным знаком "c172ac57". 
@@ -353,7 +352,7 @@ where id_mech = (select id_mech from maintenance m2 where gnz = 'o929ao57')
 select *
 from vehicle v 
 where "ser$reg_certif" = (select "ser$reg_certif" from vehicle v2 where gnz = 'c172ac57') and 
-idb = (select idb from vehicle v3 where gnz = 'c172ac57') and gnz != 'c172ac57'
+idb = (select idb from vehicle v3 where gnz = 'c172ac57') and gnz != 'c172ac57' ;
 
 --===== Вложенные запросы =====--
 
@@ -362,7 +361,7 @@ idb = (select idb from vehicle v3 where gnz = 'c172ac57') and gnz != 'c172ac57'
 --Ответ: 2 строки, 1 столбец. Автомобили "c519op57"и "a333aa57".
 select gnz 
 from vehicle
-where gnz not in (select gnz from maintenance)
+where gnz not in (select gnz from maintenance) ;
 
 --43.	 Составить список автомобилей (государственный номерной знак и стоимость), 
 --которые стоят не более средней стоимости всех зарегистрированных автомобилей. 
@@ -370,7 +369,7 @@ where gnz not in (select gnz from maintenance)
 --Сумма стоимости найденных автомобилей 83 170 150 руб. 00 коп.
 select gnz, "cost" 
 from vehicle v 
-where "cost" < (select avg(v2.cost) from vehicle v2 )
+where "cost" < (select avg(v2.cost) from vehicle v2 ) ;
 
 --44.	 Найти автомобили, которые были приобретены не новыми. К таким можно отнести 
 --экземпляры, у которых год и месяц начала эксплуатации и год и месяц даты выдачи 
@@ -379,8 +378,7 @@ where "cost" < (select avg(v2.cost) from vehicle v2 )
 select gnz 
 from vehicle v 
 where to_char(date_use,'mm.yyyy') != to_char(date$reg_certif,'mm.yyyy')
-order by 1
-
+order by 1 ;
 
 --45.	 Найти автомобили, изготовленные на том же заводе, что и автомобиль с 
 --государственным номерным знаком "x027kp57". Выдать их государственные номерные знаки, 
@@ -392,7 +390,7 @@ from vehicle v
 join factory f on f.idf = v.idf 
 where v.idf in (select idf from vehicle where gnz = 'x027kp57') and 
 f.idf in (select idf from vehicle where gnz = 'x027kp57') 
-and v.gnz!= 'x027kp57'
+and v.gnz!= 'x027kp57' ; 
 
 --46.	 Составить список автомобильных брендов, не имеющих собственного производства на 
 --территории Российской Федерации. Указать их наименования, государственную принадлежность.
@@ -402,12 +400,11 @@ from factory f
 join brand b on b.idb = f.idb 
 join state s2 on s2.st_id = f.st_id 
 where f.st_id != (select s.st_id from state s
-	where s."name" like 'Российская Федерация')
+	where s."name" like 'Российская Федерация') ;
 
 --47.	 Найти производителей, которые имеют заводы, как на территории Российской Федерации, 
 --так и за ее пределами. Указать наименование бренда, название и адрес размещения завода.
 --Ответ: производители "BMW" и "Mercedes-Benz". Всего 6 строк.
-
 select distinct b.name, f.factory_name, f.legal_addr
 from (
 	select b.idb , b.name
@@ -418,7 +415,7 @@ join factory f on f.idb = b.idb and f.idb in (
 	select b.idb 
 	from brand b
 	join factory f on f.idb = b.idb 
-	where f.legal_addr not ilike '%Росси%') 
+	where f.legal_addr not ilike '%Росси%') ;
 
 
 --48.	 Определить почтовый адрес завода, изготовившего автомобиль с государственным 
@@ -438,13 +435,12 @@ join marka m on m.idm = v.idm
 join model mo on mo.idmo = v.idmo
 join factory f on f.idf  = v.idf  
 join maintenance ma on ma.gnz = v.gnz 
-where v.gnz like 'a723ak57 ' and (to_char(ma.date_work, 'dd.mm.yyyy') = '06.11.2018') 
+where v.gnz like 'a723ak57 ' and (to_char(ma.date_work, 'dd.mm.yyyy') = '06.11.2018') ;
 
 --49.	 Рассчитать количество заказов по видам работ. Выдачу сформировать в виде таблицы, 
 --где предусмотреть три столбца: "Техническое обслуживание", включив в подсчет все 
 --виды технического обслуживания: "Ремонт"; "Предпродажная подготовка". 
 --Ответ: 499 ТО, 141 ремонтов, 86 предпродажных подготовок.
-
 select sum(case when (m.mt_id in (
 				select mt.mt_id 
                 from maintenancetype mt
@@ -457,8 +453,7 @@ sum(case when (m.mt_id in (
 				select mt.mt_id 
                 from maintenancetype mt
                 where mt.name ilike '%предпродажная подготовка%')) then 1 else 0 end) as "предпродажная подготовка"
-from maintenance m
-
+from maintenance m ;
 
 --50.	 Найти механиков, которые выполнили 2 и более заказов в один день. Выдать 
 --их фамилии и инициалы. Ответ: 8 механиков, один из которых Слепцов П.Н.
@@ -469,7 +464,7 @@ count(m.idm) over (partition by m.date_work::date, m.id_mech  order by m.id_mech
 from maintenance m 
 join mechanic m2 on m2.id_mech = m.id_mech 
 ) t
-where t.count > 1
+where t.count > 1 ;
 
 --===== Теоретико-множественные операции =====--
 
@@ -490,8 +485,7 @@ where s."name" ilike 'российская федерация' and
        s."name" not ilike 'российская федерация' and  
        date_part('year', age(v.date_made)) >= 25
        or 
-       v.run >= 500000
-
+       v.run >= 500000 ;
 
 --52.	 Найти автомобили, которые посещали предприятие только по пятницам. Выдать 
 --государственные номерные знаки. Ответ: 9 автомобилей, один из которых – "c806yc57".
@@ -499,7 +493,7 @@ select distinct m.gnz
 from maintenance m
 where to_char(m.date_work, 'day') like 'f%' and 
 	not exists (select m2.gnz from maintenance m2
-                where to_char(m2.date_work, 'day') not like 'f%' and m.gnz = m2.gnz)
+                where to_char(m2.date_work, 'day') not like 'f%' and m.gnz = m2.gnz) ;
 
 		
 --53.	 Найти все автомобили, обслуженные механиком Баженовым М.К. (все виды ТО), 
@@ -522,7 +516,7 @@ where mt."name" ilike 'ремонт%' and mech.sname_initials ilike 'савос�
 select cte2.gnz
 from cte1
 left join cte2 on cte2.gnz = cte1.gnz
-where cte2.gnz is not null
+where cte2.gnz is not null ;
                                 
 
 --54.	 Найти механиков, которые в 2018 году ежемесячно (без пропусков) получали 
@@ -533,7 +527,7 @@ from mechanic mech
 join maintenance m on m.id_mech = mech.id_mech 
 where to_char(m.date_work, 'yyyy') = '2018' 
 group by mech.sname_initials
-having count(distinct to_char(m.date_work, 'mm.yyyy')) >= 12
+having count(distinct to_char(m.date_work, 'mm.yyyy')) >= 12 ;
 
 
 --55.	 Найти автомобили, которые обслуживались только в 2018 году. Указать 
@@ -543,7 +537,7 @@ select m.gnz, to_char(m.date_work, 'dd.mm.yyyy') as "date", m.tech_cond_resume
 from maintenance m
 where not exists(select m2.gnz from maintenance m2 
 				 where to_char(m2.date_work, 'yyyy') != '2018' and m2.gnz = m.gnz)
-	and to_char(m.date_work, 'yyyy') = '2018'
+	and to_char(m.date_work, 'yyyy') = '2018' ;
 
 
 --56.	 Выдать список рабочих дней в феврале 2018 года, в которые не выполнялись 
@@ -553,7 +547,7 @@ select to_char(dates, 'dd.mm.yyyy')
 from generate_series('2018-02-01', '2018-02-28', interval '1 day') as dates
 where to_char(dates, 'dd.mm.yyyy') not in 
 								(select to_char(date_work, 'dd.mm.yyyy') 
-								from maintenance m)
+								from maintenance m) ;
 
 	
 --===== Агрегирование данных, групповые операции =====--
@@ -562,7 +556,7 @@ where to_char(dates, 'dd.mm.yyyy') not in
 --Ответ: закрыто 98 заказов.
 select count(m.date_work) 
 from maintenance m 
-where to_char(date_work, 'yyyy') = '2017'
+where to_char(date_work, 'yyyy') = '2017' ;
 
 --58.	 Рассчитать общую сумму НДС, уплаченную в 2016 году (НДС рассчитывается как 
 --18% от суммы платежа) за приобретенные автомобили. Результат округлить до копеек и 
@@ -571,20 +565,20 @@ where to_char(date_work, 'yyyy') = '2017'
 select concat(trunc(sum(cost * 0.18)), ' руб. ', 
 trunc(mod(sum(cost * 0.18), 1) * 100),' коп.') 
 from vehicle v
-where to_char(date_made, 'yyyy') = '2016'
+where to_char(date_made, 'yyyy') = '2016' ;
 
 
 --59.	 Определить, сколько учтено автомобилей, зарегистрированных в Орловской области. 
 --Ответ: 147 автомобилей.
 select count(*) 
 from vehicle
-where gnz like '%57%'
+where gnz like '%57%' ;
 
 --60.	 Определить средний возраст механиков предприятия с точностью до двух значащих
 --цифр мантиссы.
 --Ответ: по состоянию на ноябрь 2022 года –  42.23 года.
 select trunc(avg(date_part('year', age(born)))::numeric,2) 
-from mechanic
+from mechanic ;
 
 --61.	 Определить общую и среднюю стоимость с точностью до копейки, общий и средний 
 --пробег с точностью до 100 м всех зарегистрированных автомобилей. Указать в качестве 
@@ -593,14 +587,14 @@ from mechanic
 select trunc(sum(cost)::numeric,2)::money as "общая стоимость", 
 trunc(avg(cost)::numeric,2)::money as "средняя стоимость", 
 trunc(sum(run),2) as "общий пробег", trunc(avg(run),2) as "средний пробег" 
-from vehicle
+from vehicle ;
 
 --62.	 Определить средний пробег автомобилей каждого бренда. Результат округлить 
 --до 10 м. 
 --Ответ: 10 строк, 2 столбца. Средний пробег автомобилей BMW 70937.40 км.
 select distinct b.name, round(avg(run) over (partition by b."name"), 2)
 from brand b
-join vehicle v on b.idb = v.idb 
+join vehicle v on b.idb = v.idb ;
 
 --63.	 Рассчитать среднюю стоимость с точностью до копейки каждой марки 
 --зарегистрированных автомобилей. В выдачу включить наименование бренда, марки и 
@@ -610,7 +604,7 @@ round(avg(v."cost") over (partition by m.idm) , 2) as "Средняя стоим
 from vehicle v 
 join brand b on b.idb = v.idb 
 join marka m on m.idm = v.idm 
-order by 1
+order by 1 ;
 
 --64.	 Определить с точностью до двух значащих цифр мантиссы средний возраст 
 --автомобилей каждой марки. Для автомобилей, у которых не предусмотрена марка, 
@@ -630,7 +624,7 @@ case
 	else cte."Марка" 
 end, cte. "Средний возраст"
 from cte
-order by 1
+order by 1 ;
 
 --65.	 Определить год, за который поступило больше всего заказов (относительно 
 --других лет). Ответ: 2019 год.
@@ -639,7 +633,7 @@ from (select distinct to_char(date_work, 'yyyy'), count(date_work)
 			over (partition by to_char(date_work, 'yyyy'))
 	  from maintenance m
       order by 2 desc 
-      limit 1) temp
+      limit 1) temp ;
 
 --66.	 Построить распределение марок автомобилей, ограничив список марками, 
 --встречающимися не менее 8 раз. Список упорядочить по уменьшению количества 
@@ -649,8 +643,7 @@ from marka m, vehicle v, brand b
 where m.idm = v.idm and m.idb = b.idb
 group by m.name, b.name
 having count(v.gnz) >= 8
-order by count desc
-
+order by count desc ;
 
 --67.	 Найти автомобили, владельцы которых за все время разместили заказ только один
 --раз. Выдать государственные номерные знаки.
@@ -659,7 +652,7 @@ select temp.gnz
 from (select distinct gnz, count(*)
 	from maintenance
 	group by gnz
-	having count(*) = 1) temp
+	having count(*) = 1) temp ;
 
 --===== Совместное использование конструкций языка SQL =====--
 
@@ -672,7 +665,7 @@ as "Завод-изготовитель", f.legal_addr "Фактический �
 from vehicle v
 join state s on s.st_id = v.st_id 
 join factory f on f.idf = v.idf 
-where s.euro_union = '1' 
+where s.euro_union = '1' ;
 	
 --69.	 Найти автомобили, которые проходили на предприятии только предпродажную 
 --подготовку. Указать их государственные номерные знаки, дату предпродажной подготовки, 
@@ -682,7 +675,7 @@ select m.gnz, to_char(m.date_work, 'dd.mm.yyyy') "Date", mech.sname_initials
 from maintenance m
 join maintenancetype mt on mt.mt_id = m.mt_id 
 join mechanic mech on mech.id_mech = m.id_mech 
-where mt.name ilike '%подготовка%'
+where mt.name ilike '%подготовка%' ;
 
 --70.	 Определить автомобильный бренд, на который клиенты предприятия, вместе 
 --потратили больше всех денег (найти «автомобиль богатых»).
@@ -694,7 +687,7 @@ from(
 	join brand b on b.idb = v.idb
 	group by b.name
 	order by sum(v.cost) desc 
-	limit 1) t
+	limit 1) t ;
 
 --71.	 Определить, сколько автобусов обслужено механиком Кротовым К.О.
 --Ответ: 4 автобуса.
@@ -704,7 +697,7 @@ right join mechanic mech on m.id_mech = mech.id_mech and mech.sname_initials ili
 join brand b on b.idb = m.idb 
 join marka ma on ma.idb = b.idb 
 join model mo on mo.idb = b.idb
-where ma.name ilike 'газель' or b.name ilike 'volgabus' and mech.sname_initials ilike '%кротов%'
+where ma.name ilike 'газель' or b.name ilike 'volgabus' and mech.sname_initials ilike '%кротов%' ;
 
 
 --72.	 Найти автомобили, которые были приобретены не новыми (интервал между датой 
@@ -724,7 +717,7 @@ join factory f on f.idf = v.idf
 join brand b on b.idb = v.idb 
 join marka m on m.idm = v.idm
 where v.date$reg_certif - v.date_use > 14
-order by v.gnz 
+order by v.gnz ;
 
 --73.	 Сформировать список заводов по производству автомобилей, размещенных на 
 --территории Российской Федерации, и, в зависимости от того, входит ли страна бренда 
@@ -737,7 +730,7 @@ select f.factory_name "Завод", b.name "Бренд",
 from factory f
 join brand b on b.idb = f.idb 
 join state s on s.st_id = b.st_id
-where f.legal_addr ilike '%россия%'
+where f.legal_addr ilike '%россия%' ;
 
 --74.	 Найти производителей, автомобили которых в 2018 году реже остальных 
 --требовали ремонта. Выдать названия брендов и количество ремонтов их автомобилей.
@@ -749,7 +742,7 @@ join maintenancetype mt on mt.mt_id = m.mt_id
 where to_char(m.date_work,'yyyy') = '2018' and mt.name ilike 'ремонт'
 group by b.name
 order by count(m.gnz) 
-limit 1
+limit 1 ;
 
 --75.	 Найти механиков, которые выполнили больше работ, чем Голубев Д.Н. В выдачу 
 --включить фамилии и инициалы этих людей.
@@ -761,7 +754,7 @@ group by 1
 having count(m.tech_cond_resume) > (select count(m.tech_cond_resume)
 									from mechanic mech
 									join maintenance m on m.id_mech = mech.id_mech 
-									where mech.sname_initials ilike 'голубев%')
+									where mech.sname_initials ilike 'голубев%') ;
 									
 --76.	 Найти автомобили, зарегистрированные в один и тот же день. Выдать 
 --государственные номерные знаки, в одном столбце через пробел производителя, марку и 
@@ -776,7 +769,7 @@ where v.gnz != v2.gnz and
 ) t
 join marka ma on t.idm = ma.idm
 join model mo on mo.idmo = t.idmo 
-join brand b on b.idb = t.idb  
+join brand b on b.idb = t.idb  ;
 									
 --77.	 Для каждого автомобиля указать число посещения им предприятия (учитывать, что
 -- могут быть автомобили, которые ни разу не обслуживались, в этом случае выводить 
@@ -791,7 +784,7 @@ group by v.gnz, v.ser$reg_certif, v.num$reg_certif, v.date$reg_certif
 union 
 select v.gnz, v.ser$reg_certif, v.num$reg_certif, v.date$reg_certif, 0
 from vehicle v
-where v.gnz not in (select gnz from maintenance )
+where v.gnz not in (select gnz from maintenance ) ;
 
 --78.	 Найти автомобили, которые в 2016, 2017 и 2018 годах совершили 80% и более 
 --посещений предприятия от всего объема их обслуживания за все время. Вывести их 
@@ -807,7 +800,7 @@ from maintenance m, (select m.gnz, count(to_char(m.date_work, 'yyyy'))
 where m.gnz = t.gnz 
 group by m.gnz, t.count 
 having count(to_char(m.date_work, 'yyyy'))*0.8 <= t.count 
-order by m.gnz
+order by m.gnz ;
 
 --79.	 Найти механиков, получивших сертификат на работу после достижения ими 
 --пенсионного возраста. Учесть, что до 2018 года возраст выхода на пенсию для мужчин 
@@ -822,7 +815,7 @@ where date_part('year', age(m.born)) >= 60 and m.sname_initials not ilike '%а _
 union
 select m.sname_initials , date_part('year', age(m.born))
 from mechanic m
-where date_part('year', age(m.born)) >= 55 and m.sname_initials ilike '%а _._.'
+where date_part('year', age(m.born)) >= 55 and m.sname_initials ilike '%а _._.' ;
 
 
 --80.	 Сформировать отчет о выполненных ремонтах автомобилей за все время работы 
@@ -845,8 +838,7 @@ join brand b on m.idb = b.idb
 join vehicle v on m.gnz = v.gnz
 join mechanic mech on m.id_mech = mech.id_mech
 join maintenancetype mt on m.mt_id = mt.mt_id 
-where mt."name" ilike 'ремонт%'
-
+where mt."name" ilike 'ремонт%' ;
 
 --81.	 Определить долю в процентах (с точностью до двух значащих цифр мантиссы) 
 --в общем результате предприятия механика Савостьянова А.В. Считать, что все работы 
@@ -860,8 +852,7 @@ from (select count(m.*)
 	 (select count(m.*)
 	  from maintenance m
 	  join mechanic mech on mech.id_mech = m.id_mech 
-      where m.id_mech = mech.id_mech) temp_all
-
+      where m.id_mech = mech.id_mech) temp_all ;
 
 --82.	 Сформировать список инвестиционно не выгодных автомобилей. К таковым относятся
 --автомобили с пробегом не менее 100 000 км, или имеющие возраст 3 и более года, или 
@@ -888,9 +879,7 @@ where
 	tg.name ilike 'спортивные мотоциклы'
 	) t
 where t.row_number = 1 
-order by 1
-
-
+order by 1 ;
  
 --83.	 Определить проводилось ли не регламентное техническое обслуживание автомобилей 
 --японского производства. Не регламентным считается любое техническое обслуживание, 
@@ -911,7 +900,7 @@ join marka ma on ma.idm = m.idm
 join model mo on mo.idmo = m.idmo 
 join brand br on br.idb = m.idb 
 where st.name ilike 'япония%' and mt.name not ilike '%японских%' 
-	and mt.name ilike '%то-%' 
+	and mt.name ilike '%то-%' ;
 
 	
 --===== Задания повышенной сложности =====--
@@ -927,7 +916,7 @@ join maintenance m2 on m.gnz = m2.gnz and m.date_work != m2.date_work
 where extract(epoch from m.date_work - m2.date_work) > 0
 group by m.gnz, m.date_work, m2.date_work
 order by "СЕК" asc 
-limit 1
+limit 1 ;
 
 
 --85.	 Найти объем убыли клиентов с ростом возраста автомобилей, составив таблицу, 
@@ -948,7 +937,7 @@ from cte1 where cte1.name not ilike '%то-%япон%'
 union all 
 select cte1.* 
 from cte1
-where cte1.name ilike '%то-%япон%'
+where cte1.name ilike '%то-%япон%' ;
 
 
 --86.	 Составить таблицу изменения рентабельности предприятия по годам, где показаны 
@@ -1005,7 +994,7 @@ full join
 							 where date_part('year', age(date_use)) > 18) temp
 	where date_part('year', age(date_use)) > 18 and v.idb = b.idb
 	group by b.name, temp.count) t6
-on b.name = t6.name
+on b.name = t6.name ;
 
 
 --88.	 Определить завод-изготовитель, продукция которого больше других требует ремонта 
@@ -1016,23 +1005,22 @@ on b.name = t6.name
 --ремонтов на один зарегистрированный автомобиль.
 --Ответ: по обоим показателям один и тот же завод "Austria Bavarischen motorwerke" 
 --с абсолютным показателем 3 отказа и долей в 0.666667.
-select temp1.factory_name, temp1.round 
-from (
-	select temp_rep.factory_name, 
-	round((temp_veh.count::float/temp_rep.count::float)::numeric,6) 
-	from (select f.factory_name , count(v.gnz) 
-			from factory f, vehicle v 
-			where f.idf = v.idf 
-			group by f.factory_name 
-			order by f.factory_name) temp_veh, 
-		(select f.factory_name, count(m.gnz) 
-			from maintenance m, factory f 
-			where f.idf = m.idf 
-			group by f.factory_name 
-			order by f.factory_name) temp_rep 
-	where temp_veh.factory_name = temp_rep.factory_name 
-	order by round((temp_veh.count::float/temp_rep.count::float)::numeric,6) desc 
-	limit 1) temp1 
+select f.factory_name , b."name" , s."name" , b.post_addr , b.phone , t."Всего", 
+t."Ремонтов", t."Доля"
+from 
+(
+select m.idf, count(*) "Всего", count(distinct v.gnz) "Ремонтов",
+round((count(distinct v.gnz)::numeric / count(*)::numeric), 2) "Доля"
+from maintenance m 
+left join maintenancetype mt on mt.mt_id = m.mt_id and mt."name" ilike 'ремонт'
+left join vehicle v on v.gnz = m.gnz 
+group by m.idf 
+order by (count(distinct v.gnz)::numeric / count(*)::numeric ) desc
+limit 1
+) t
+join factory f on f.idf = t.idf 
+join brand b on f.idb = b.idb 
+join state s on b.st_id = s.st_id ;
 
 --89.	 Найти автомобили с заводским браком (интервал времени между датой регистрации
 --и первым ремонтом, не превышающий 1 года). Выдать их государственные номерные знаки; 
@@ -1054,26 +1042,27 @@ join vehicle v on cte.gnz = v.gnz
 join brand b on b.idb = v.idb 
 join marka ma on ma.idm = v.idm 
 join model mo on mo.idmo = v.idmo
-where cte.row_number = 1 and date_part('day', cte.date_work - v.date$reg_certif) < 366
+where cte.row_number = 1 and date_part('day', cte.date_work - v.date$reg_certif) < 366;
 
 --90.	 Найти автомобили, которые в течение одного года обслуживались или ремонтировались 
 --только у разных механиков. Выдать их государственные номерные знаки, даты, когда 
 --проводилось обслуживание или ремонт, фамилии и инициалы механиков. Учесть, что 
 --автомобили, посещавшие предприятие один раз в году, также относятся к обслуженным 
 --разными механиками в этом году, отсортировать выдачу по государственным номерным знакам.
---Ответ: 340 строк, 3 столбца.
+--Ответ: 344 строк, 3 столбца.
 with cte as(
 select m.gnz, mch.id_mech, date_part('year',m.date_work)
 from maintenance m
 join mechanic mch on mch.id_mech = m.id_mech
 )
+select m.gnz, mech.sname_initials, m.date_work
 from maintenance m
-join mechanic mch on mch.id_mech = m.id_mech
+join mechanic mech on mech.id_mech = m.id_mech
 join cte on cte.gnz = m.gnz
 	and date_part('year',m.date_work) = cte.date_part 
 	and m.id_mech != cte.id_mech 
-group by m.gnz, mch.sname_initials, m.date_work, cte.date_part
-order by m.gnz, cte.date_part desc
+group by m.gnz, mech.sname_initials, m.date_work, cte.date_part
+order by m.gnz, cte.date_part desc ;
 
 --91.	 Определить медианное значение и разброс стоимости зарегистрированных автомобилей, 
 --считая, что стоимость распределена нормально. Для определения медианного значения 
@@ -1090,4 +1079,4 @@ from (
 select v."cost", count(v."cost")
 from vehicle v
 group by v.cost
-) t
+) t ;
